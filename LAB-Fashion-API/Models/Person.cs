@@ -15,9 +15,7 @@ namespace LAB_Fashion_API.Models
 
         [Column(TypeName = "Date")]
         public DateTime Birthday { get; set; }
-        [NotNull]
         public string Cpf { get; set; } = string.Empty;
-        [NotNull]
         public string Cnpj { get; set; } = string.Empty;
         [NotNull]
         public string Phone { get; set; } = string.Empty;
