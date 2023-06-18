@@ -1,5 +1,6 @@
 ﻿using LAB_Fashion_API.Enums;
 using LAB_Fashion_API.Models;
+using LAB_Fashion_API.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LAB_Fashion_API.Controllers
@@ -8,42 +9,41 @@ namespace LAB_Fashion_API.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private static List<User> users = new List<User> { 
-            new User("Teste", "Masculino", new DateTime(), "55999999999", "teste@teste.com"),
-            new User("Another Teste", "Masculino", new DateTime(), "55999999955", "anotherteste@teste.com"),
-        };
+        private readonly IUserService _service;
+
+        public UserController(IUserService service)
+        {
+            _service = service;
+        }
 
         [HttpGet]
         public ActionResult<List<User>> Get()
         {
-            return Ok(users);
+            return Ok(_service.GetAllUsers());
         }
 
         [HttpGet("{id}")]
         public ActionResult<User> GetById(int id)
         {
-            return Ok(users[id]);
+            return Ok(_service.GetById(id));
         }
 
         [HttpPost]
-        public ActionResult<User> Post([FromBody] User user)
+        public ActionResult<User> Post(User user)
         {
-            users.Add(user);
-            return Ok(user);
+            return Ok(_service.AddUser(user));
         }
 
         [HttpPut("{id}")]
-        public ActionResult<User> Put(int id ,[FromBody] User user)
+        public ActionResult<User> Put(int id ,User user)
         {
-            users[id] = user;
-            return Ok(user);
+            return Ok(_service.UpdateUser(id, user));
         }
 
         [HttpPut("{id}/status")]
         public ActionResult<User> PutStatus(int id, [FromQuery]StatusType status)
         {
-            users[id].Status = status;
-            return Ok(users[id]);
+            return Ok(_service.UpdateUserStatus(id, status));
         }
     }
 }
