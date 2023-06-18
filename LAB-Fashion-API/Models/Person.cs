@@ -4,8 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace LAB_Fashion_API.Models
 {
+    [Index(nameof(Cpf), IsUnique = true)]
+    [Index(nameof(Cnpj), IsUnique = true)]
     public abstract class Person
     {
+        /*
         protected Person(string name, string sex, DateTime birthDay, string? cpf, string? cnpj, string phone)
         {
             Name = name;
@@ -15,7 +18,7 @@ namespace LAB_Fashion_API.Models
             Cpf = cpf;
             Cnpj = cnpj;
         }
-
+        */
         [Key]
         public int Id { get; set; }
         [NotNull]

@@ -8,10 +8,7 @@ namespace LAB_Fashion_API.Services.UserService
     public class UserService : IUserService
     {
 
-        private static List<User> users = new List<User> {
-            new User("Teste", "Masculino", new DateTime(), "00000000000", null , "55999999999", "teste@teste.com", UserType.Creator),
-            new User("Another Teste", "Masculino", new DateTime(), null, "0000000000000", "55999999955", "anotherteste@teste.com", UserType.Manager),
-        };
+        private static List<User> users = new List<User> {};
         
         public async Task<ServiceResponse<User>> AddUser(User user)
         {
