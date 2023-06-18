@@ -8,41 +8,42 @@ namespace LAB_Fashion_API.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        // private static User user = new User("Teste", "Masculino", new DateTime(), "00000000000", null, "55999999999", "teste@teste.com");
+        private static List<User> users = new List<User> { 
+            new User("Teste", "Masculino", new DateTime(), "55999999999", "teste@teste.com"),
+            new User("Another Teste", "Masculino", new DateTime(), "55999999955", "anotherteste@teste.com"),
+        };
 
         [HttpGet]
-        /*
-        public ActionResult<User> Get()
+        public ActionResult<List<User>> Get()
         {
-            return Ok();
-        }*/
-        public string Get()
-        {
-            return "Get method called";
+            return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public string GetById(int id)
+        public ActionResult<User> GetById(int id)
         {
-            return "Get by Id method called";
+            return Ok(users[id]);
         }
 
         [HttpPost]
-        public string Post()
+        public ActionResult<User> Post([FromBody] User user)
         {
-            return "Post method called";
+            users.Add(user);
+            return Ok(user);
         }
 
-        [HttpPut]
-        public string Put()
+        [HttpPut("{id}")]
+        public ActionResult<User> Put(int id ,[FromBody] User user)
         {
-            return "Put method called";
+            users[id] = user;
+            return Ok(user);
         }
 
-        [HttpPut("/status")]
-        public string PutStatus([FromQuery]StatusType status)
+        [HttpPut("{id}/status")]
+        public ActionResult<User> PutStatus(int id, [FromQuery]StatusType status)
         {
-            return status.ToString();
+            users[id].Status = status;
+            return Ok(users[id]);
         }
     }
 }
