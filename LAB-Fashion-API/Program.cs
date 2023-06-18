@@ -1,4 +1,5 @@
 global using LAB_Fashion_API.Services.UserService;
+global using LAB_Fashion_API.Wrapper;
 
 var builder = WebApplication.CreateBuilder(args);
 

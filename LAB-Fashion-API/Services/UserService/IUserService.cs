@@ -5,10 +5,10 @@ namespace LAB_Fashion_API.Services.UserService
 {
     public interface IUserService
     {
-        List<User> GetAllUsers();
-        User GetById(int id);
-        User AddUser(User user);
-        User UpdateUser(int id, User user);
-        User UpdateUserStatus(int id, StatusType status);
+        Task<ServiceResponse<List<User>>> GetAllUsers();
+        Task<ServiceResponse<User>> GetById(int id);
+        Task<ServiceResponse<User>> AddUser(User user);
+        Task<ServiceResponse<User>> UpdateUser(int id, User user);
+        Task<ServiceResponse<User>> UpdateUserStatus(int id, StatusType status);
     }
 }

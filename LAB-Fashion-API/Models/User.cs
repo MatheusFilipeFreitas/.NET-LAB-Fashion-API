@@ -5,10 +5,11 @@ namespace LAB_Fashion_API.Models
 {
     public class User : Person
     {
-        public User(string name, string sex, DateTime birthDay, string phone, string email)
-            :base(name, sex, birthDay, phone)
+        public User(string name, string sex, DateTime birthDay, string? cpf, string? cnpj, string phone, string email, UserType type)
+            :base(name, sex, birthDay, cpf, cnpj, phone)
         {
             Email = email;
+            Type = type;
         }
 
         [NotNull]

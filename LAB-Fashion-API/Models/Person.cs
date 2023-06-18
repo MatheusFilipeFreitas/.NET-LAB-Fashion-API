@@ -6,12 +6,14 @@ namespace LAB_Fashion_API.Models
 {
     public abstract class Person
     {
-        protected Person(string name, string sex, DateTime birthDay, string phone)
+        protected Person(string name, string sex, DateTime birthDay, string? cpf, string? cnpj, string phone)
         {
             Name = name;
             Sex = sex;
             Birthday = birthDay;
             Phone = phone;
+            Cpf = cpf;
+            Cnpj = cnpj;
         }
 
         [Key]
@@ -22,7 +24,7 @@ namespace LAB_Fashion_API.Models
         public string Sex { get; set; } = string.Empty;
 
         [Column(TypeName = "Date")]
-        public DateTime Birthday { get; set; }
+        public DateTime Birthday { get; set; } = new DateTime();
         public string? Cpf { get; set; }
         public string? Cnpj { get; set; }
         [NotNull]
