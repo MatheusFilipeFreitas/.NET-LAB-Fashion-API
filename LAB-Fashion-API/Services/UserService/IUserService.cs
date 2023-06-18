@@ -1,14 +1,15 @@
-﻿using LAB_Fashion_API.Enums;
+﻿using LAB_Fashion_API.Dto.User;
+using LAB_Fashion_API.Enums;
 using LAB_Fashion_API.Models;
 
 namespace LAB_Fashion_API.Services.UserService
 {
     public interface IUserService
     {
-        Task<ServiceResponse<List<User>>> GetAllUsers();
-        Task<ServiceResponse<User>> GetById(int id);
-        Task<ServiceResponse<User>> AddUser(User user);
-        Task<ServiceResponse<User>> UpdateUser(int id, User user);
-        Task<ServiceResponse<User>> UpdateUserStatus(int id, StatusType status);
+        Task<ServiceResponse<List<GetUserDto>>> GetAllUsers();
+        Task<ServiceResponse<GetUserDto>> GetById(int id);
+        Task<ServiceResponse<GetUserDto>> AddUser(AddUserDto newUser);
+        Task<ServiceResponse<GetUserDto>> UpdateUser(int id, AddUserDto updateUser);
+        Task<ServiceResponse<GetUserDto>> UpdateUserStatus(int id, StatusType status);
     }
 }
