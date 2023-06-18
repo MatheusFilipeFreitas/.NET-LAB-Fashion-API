@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "aD4UPeFi6cubwuRDB2jaAO87c/P8gQcdGfzHPEPqEgteeXMAilsh2c3+7YFO6v7CWZ7MNXQpYCz5ZWbRs9XeCQ==",
+  "dgSpecHash": "29DUDCautJBxTBydyD/Jtu+3Y3bHZ/IhENwf4cvXfh3ZiKeXAGyEnDYlEPuqchSKy2mLmF7H6BtI06cmXVxozQ==",
   "success": true,
   "projectFilePath": "D:\\Courses\\DEVinHouse Audaces\\LAB-Fashion-API\\LAB-Fashion-API\\LAB-Fashion-API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\MathF\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\MathF\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\MathF\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\MathF\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
     "C:\\Users\\MathF\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

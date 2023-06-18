@@ -2,6 +2,8 @@ global using LAB_Fashion_API.Services.UserService;
 global using LAB_Fashion_API.Wrapper;
 global using Microsoft.EntityFrameworkCore;
 global using LAB_Fashion_API.Data;
+global using LAB_Fashion_API.Dto;
+global using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddScoped<IUserService, UserService>();
 

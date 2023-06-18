@@ -2,35 +2,49 @@
 using LAB_Fashion_API.Errors.User;
 using LAB_Fashion_API.Models;
 using LAB_Fashion_API.Errors;
+using LAB_Fashion_API.Dto.User;
+using AutoMapper;
 
 namespace LAB_Fashion_API.Services.UserService
 {
     public class UserService : IUserService
     {
+        private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        private readonly HttpContextAccessor _contextAccessor;
 
-        private static List<User> users = new List<User> {};
-        
-        public async Task<ServiceResponse<User>> AddUser(User user)
+        public UserService(DataContext context, IMapper mapper, HttpContextAccessor contextAccessor)
         {
-            var serviceResponse = new ServiceResponse<User>();
+            _context = context;
+            _mapper = mapper;
+            _contextAccessor = contextAccessor;
+        }
+
+        public async Task<ServiceResponse<GetUserDto>> AddUser(AddUserDto newUser)
+        {
+            var serviceResponse = new ServiceResponse<GetUserDto>();
             var errors = new List<UserErrorMessages>();
-            users.Add(user);
-            serviceResponse.Data = user;
+            var user = _mapper.Map<User>(newUser);
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            serviceResponse.Data = _mapper.Map<GetUserDto>(user);
             return serviceResponse;
         }
 
 
-        public async Task<ServiceResponse<List<User>>> GetAllUsers()
+        public async Task<ServiceResponse<List<GetUserDto>>> GetAllUsers()
         {
-            var serviceResponse = new ServiceResponse<List<User>>();
+            var serviceResponse = new ServiceResponse<List<GetUserDto>>();
             var errors = new List<UserErrorMessages>();
             serviceResponse.Data = users;
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<User>> GetById(int id)
+        public async Task<ServiceResponse<GetUserDto>> GetById(int id)
         {
-            var serviceResponse = new ServiceResponse<User>();
+            var serviceResponse = new ServiceResponse<GetUserDto>();
             var errors = new List<UserErrorMessages>();
             var user = users.FirstOrDefault(user => user.Id == id);
             if(user is null)
@@ -43,9 +57,9 @@ namespace LAB_Fashion_API.Services.UserService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<User>> UpdateUser(int id, User user)
+        public async Task<ServiceResponse<GetUserDto>> UpdateUser(int id, AddUserDto updateUser)
         {
-            var serviceResponse = new ServiceResponse<User>();
+            var serviceResponse = new ServiceResponse<GetUserDto>();
             var errors = new List<UserErrorMessages>();
             var userFound = users.FirstOrDefault(user => user.Id == id);
             if(userFound is null)
@@ -63,9 +77,9 @@ namespace LAB_Fashion_API.Services.UserService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<User>> UpdateUserStatus(int id, StatusType status)
+        public async Task<ServiceResponse<GetUserDto>> UpdateUserStatus(int id, StatusType status)
         {
-            var serviceResponse = new ServiceResponse<User>();
+            var serviceResponse = new ServiceResponse<GetUserDto>();
             var errors = new List<UserErrorMessages>();
             var userFound = users.FirstOrDefault(user => user.Id == id);
             if (userFound is null)
