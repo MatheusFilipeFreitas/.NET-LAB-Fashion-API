@@ -1,5 +1,7 @@
 ﻿using LAB_Fashion_API.Enums;
+using LAB_Fashion_API.Errors.User;
 using LAB_Fashion_API.Models;
+using LAB_Fashion_API.Errors;
 
 namespace LAB_Fashion_API.Services.UserService
 {
@@ -7,42 +9,81 @@ namespace LAB_Fashion_API.Services.UserService
     {
 
         private static List<User> users = new List<User> {
-            new User("Teste", "Masculino", new DateTime(), "55999999999", "teste@teste.com"),
-            new User("Another Teste", "Masculino", new DateTime(), "55999999955", "anotherteste@teste.com"),
+            new User("Teste", "Masculino", new DateTime(), "00000000000", null , "55999999999", "teste@teste.com", UserType.Creator),
+            new User("Another Teste", "Masculino", new DateTime(), null, "0000000000000", "55999999955", "anotherteste@teste.com", UserType.Manager),
         };
-
-        public User AddUser(User user)
+        
+        public async Task<ServiceResponse<User>> AddUser(User user)
         {
+            var serviceResponse = new ServiceResponse<User>();
+            var errors = new List<UserErrorMessages>();
             users.Add(user);
-            return user;
+            serviceResponse.Data = user;
+            return serviceResponse;
         }
 
 
-        public List<User> GetAllUsers()
+        public async Task<ServiceResponse<List<User>>> GetAllUsers()
         {
-            return users;
+            var serviceResponse = new ServiceResponse<List<User>>();
+            var errors = new List<UserErrorMessages>();
+            serviceResponse.Data = users;
+            return serviceResponse;
         }
 
-        public User GetById(int id)
+        public async Task<ServiceResponse<User>> GetById(int id)
         {
+            var serviceResponse = new ServiceResponse<User>();
+            var errors = new List<UserErrorMessages>();
             var user = users.FirstOrDefault(user => user.Id == id);
             if(user is null)
             {
-                throw new Exception("User not found");
+                errors.Add(UserErrorMessages.NotFound);
+                serviceResponse.Success = false;
+                serviceResponse.Messages = errors;
             }
-            return users[id];
+
+            return serviceResponse;
         }
 
-        public User UpdateUser(int id, User user)
+        public async Task<ServiceResponse<User>> UpdateUser(int id, User user)
         {
-            users[id] = user;
-            return user;
+            var serviceResponse = new ServiceResponse<User>();
+            var errors = new List<UserErrorMessages>();
+            var userFound = users.FirstOrDefault(user => user.Id == id);
+            if(userFound is null)
+            {
+                errors.Add(UserErrorMessages.NotFound);
+                serviceResponse.Success = false;
+                serviceResponse.Messages = errors;
+            }
+            else
+            {
+                userFound = user;
+                serviceResponse.Data = userFound;
+            }
+            
+            return serviceResponse;
         }
 
-        public User UpdateUserStatus(int id, StatusType status)
+        public async Task<ServiceResponse<User>> UpdateUserStatus(int id, StatusType status)
         {
-            users[id].Status = status;
-            return users[id];
+            var serviceResponse = new ServiceResponse<User>();
+            var errors = new List<UserErrorMessages>();
+            var userFound = users.FirstOrDefault(user => user.Id == id);
+            if (userFound is null)
+            {
+                errors.Add(UserErrorMessages.NotFound);
+                serviceResponse.Success = false;
+                serviceResponse.Messages = errors;
+            }
+            else
+            {
+                userFound.Status = status;
+                serviceResponse.Data = userFound;
+            }
+
+            return serviceResponse;
         }
     }
 }

@@ -17,33 +17,33 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<User>> Get()
+        public async Task<ActionResult<ServiceResponse<List<User>>>> Get()
         {
-            return Ok(_service.GetAllUsers());
+            return Ok(await _service.GetAllUsers());
         }
 
         [HttpGet("{id}")]
-        public ActionResult<User> GetById(int id)
+        public async Task<ActionResult<ServiceResponse<User>>> GetById(int id)
         {
-            return Ok(_service.GetById(id));
+            return Ok(await _service.GetById(id));
         }
 
         [HttpPost]
-        public ActionResult<User> Post(User user)
+        public async Task<ActionResult<ServiceResponse<User>>> Post(User user)
         {
-            return Ok(_service.AddUser(user));
+            return Ok(await _service.AddUser(user));
         }
 
         [HttpPut("{id}")]
-        public ActionResult<User> Put(int id ,User user)
+        public async Task<ActionResult<ServiceResponse<User>>> Put(int id ,User user)
         {
-            return Ok(_service.UpdateUser(id, user));
+            return Ok(await _service.UpdateUser(id, user));
         }
 
         [HttpPut("{id}/status")]
-        public ActionResult<User> PutStatus(int id, [FromQuery]StatusType status)
+        public async Task<ActionResult<ServiceResponse<User>>> PutStatus(int id, [FromQuery]StatusType status)
         {
-            return Ok(_service.UpdateUserStatus(id, status));
+            return Ok(await _service.UpdateUserStatus(id, status));
         }
     }
 }
