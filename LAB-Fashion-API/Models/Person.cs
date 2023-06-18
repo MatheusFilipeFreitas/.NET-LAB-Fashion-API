@@ -4,8 +4,18 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace LAB_Fashion_API.Models
 {
-    public class Person
+    public abstract class Person
     {
+        protected Person(string name, string sex, DateTime birthDay, string cpf, string cnpj, string phone)
+        {
+            Name = name;
+            Sex = sex;
+            Birthday = birthDay;
+            Cpf = cpf;
+            Cnpj = cnpj;
+            Phone = phone;
+        }
+
         [Key]
         public int Id { get; set; }
         [NotNull]
