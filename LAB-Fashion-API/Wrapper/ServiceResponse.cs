@@ -6,6 +6,6 @@ namespace LAB_Fashion_API.Wrapper
     {
         public T? Data { get; set; }
         public bool Success { get; set; } = true;
-        public List<UserErrorMessages>? Messages { get; set; }
+        public string? Messages { get; set; }
     }
 }
