@@ -1,4 +1,4 @@
-﻿using LAB_Fashion_API.Dto.User;
+﻿using LAB_Fashion_API.Dto.UserDto;
 using LAB_Fashion_API.Enums;
 using LAB_Fashion_API.Filter;
 using LAB_Fashion_API.Models;

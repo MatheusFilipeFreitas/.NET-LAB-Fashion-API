@@ -1,4 +1,4 @@
-﻿using LAB_Fashion_API.Dto.User;
+﻿using LAB_Fashion_API.Dto.CollectionDto;
 using LAB_Fashion_API.Enums;
 using LAB_Fashion_API.Errors.User;
 using LAB_Fashion_API.Filter;
@@ -21,10 +21,9 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<List<Collection>>>> Get([FromQuery] StatusType status)
+        public async Task<ActionResult<ServiceResponse<List<Collection>>>> Get([FromQuery] PaginationFilter filter, [FromQuery] StatusType status)
         {
-            var returnValue = await _service.GetAllCollections(status);
-            return Ok(returnValue);
+            return Ok(await _service.GetAllCollections(filter, route: Request.Path.Value, status));
         }
 
         [HttpGet("{id}")]
@@ -34,7 +33,8 @@ namespace LAB_Fashion_API.Controllers
             if(returnValue.Success)
             {
                 return Ok(returnValue);
-            }else if(returnValue.Messages.Contains("não foi encontrado")) {
+            }
+            else if(returnValue.Messages.Contains("não foi encontrado")) {
                 return NotFound(returnValue);
             }
             else
@@ -44,7 +44,7 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<Collection>>> Post(Collection collection)
+        public async Task<ActionResult<ServiceResponse<Collection>>> Post(AddCollectionDto collection)
         {
             var returnValue = await _service.AddCollection(collection);
             if (returnValue.Success)
@@ -62,7 +62,7 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ServiceResponse<Collection>>> Put(int id, Collection collection)
+        public async Task<ActionResult<ServiceResponse<Collection>>> Put(int id, UpdateCollectionDto collection)
         {
             var returnValue = await _service.UpdateCollection(id, collection);
             if (returnValue.Success)
@@ -80,7 +80,7 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpPut("{id}/status")]
-        public async Task<ActionResult<ServiceResponse<Collection>>> PutStatus(int id, [FromQuery] StatusType status)
+        public async Task<ActionResult<ServiceResponse<Collection>>> PutStatus(int id,[FromBody] StatusType status)
         {
             var returnValue = await _service.UpdateCollectionStatus(id, status);
             if (returnValue.Success)

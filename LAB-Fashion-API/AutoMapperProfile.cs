@@ -1,4 +1,6 @@
-﻿using LAB_Fashion_API.Dto.User;
+﻿
+using LAB_Fashion_API.Dto.CollectionDto;
+using LAB_Fashion_API.Dto.UserDto;
 using LAB_Fashion_API.Models;
 
 namespace LAB_Fashion_API
@@ -9,6 +11,11 @@ namespace LAB_Fashion_API
         {
             CreateMap<User, GetUserDto>();
             CreateMap<AddUserDto, User>();
+            CreateMap<UpdateUserDto, User>();
+
+            CreateMap<Collection, GetCollectionDto>();
+            CreateMap<AddCollectionDto, Collection>();
+            CreateMap<UpdateCollectionDto, Collection>();
         }
     }
 }

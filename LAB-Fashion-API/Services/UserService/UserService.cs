@@ -2,10 +2,11 @@
 using LAB_Fashion_API.Errors.User;
 using LAB_Fashion_API.Models;
 using LAB_Fashion_API.Errors;
-using LAB_Fashion_API.Dto.User;
 using AutoMapper;
 using LAB_Fashion_API.Filter;
 using LAB_Fashion_API.Services.UriService;
+using LAB_Fashion_API.Dto.UserDto;
+using System.ComponentModel;
 
 namespace LAB_Fashion_API.Services.UserService
 {
@@ -67,18 +68,18 @@ namespace LAB_Fashion_API.Services.UserService
                     serviceResponse.Messages = ErrorMessage(5);
                     return serviceResponse;
                 }
-                else if(user.Cpf is null && user.Cnpj == _context.Users.First().Cnpj)
+                else if(user.Cpf is null && await _context.Users.FirstOrDefaultAsync(c => c.Cnpj == user.Cnpj) is not null)
                 {
                     serviceResponse.Success = false;
                     serviceResponse.Messages = ErrorMessage(2);
                     return serviceResponse;
-                }else if(user.Cnpj is null && user.Cpf == _context.Users.First().Cpf)
+                }else if(user.Cnpj is null && await _context.Users.FirstOrDefaultAsync(c => c.Cpf == user.Cpf) is not null)
                 {
                     serviceResponse.Success = false;
                     serviceResponse.Messages = ErrorMessage(3);
                     return serviceResponse;
                 }
-                if(user.Email == _context.Users.First().Email)
+                if(await _context.Users.FirstOrDefaultAsync(c => c.Email == user.Email) is not null)
                 {
                     serviceResponse.Success = false;
                     serviceResponse.Messages = ErrorMessage(4);
@@ -126,7 +127,7 @@ namespace LAB_Fashion_API.Services.UserService
         public async Task<ServiceResponse<GetUserDto>> GetById(int id)
         {
             var serviceResponse = new ServiceResponse<GetUserDto>();
-            var user = _context.Users.FirstOrDefault(user => user.Id == id);
+            var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
             if (user is null)
             {
                 serviceResponse.Success = false;
@@ -144,7 +145,7 @@ namespace LAB_Fashion_API.Services.UserService
             var serviceResponse = new ServiceResponse<GetUserDto>();
             try
             {
-                var userFound = _context.Users.FirstOrDefault(user => user.Id == id);
+                var userFound = await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
                 if (userFound is null)
                 {
                     serviceResponse.Success = false;
@@ -174,7 +175,7 @@ namespace LAB_Fashion_API.Services.UserService
             var serviceResponse = new ServiceResponse<GetUserDto>();
             try
             {
-                var userFound = _context.Users.FirstOrDefault(user => user.Id == id);
+                var userFound = await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
                 if (userFound is null)
                 {
                     serviceResponse.Success = false;
@@ -192,9 +193,11 @@ namespace LAB_Fashion_API.Services.UserService
                 await _context.SaveChangesAsync();
                 serviceResponse.Data = _mapper.Map<GetUserDto>(userFound);
             }
-            catch (Exception ex)
+            catch (InvalidEnumArgumentException ex)
             {
-                throw new Exception(ex.ToString());
+                serviceResponse.Success = false;
+                serviceResponse.Messages = ex.Message;
+                return serviceResponse;
             }
 
             return serviceResponse;
