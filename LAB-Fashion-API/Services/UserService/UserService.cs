@@ -15,12 +15,14 @@ namespace LAB_Fashion_API.Services.UserService
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IUriService _uriService;
+        private readonly IAuthRepository _authRepository;
 
-        public UserService(DataContext context, IMapper mapper, IUriService uriService)
+        public UserService(DataContext context, IMapper mapper, IUriService uriService, IAuthRepository authRepository)
         {
             _context = context;
             _mapper = mapper;
             _uriService = uriService;
+            _authRepository = authRepository;
         }
 
         private string ErrorMessage(int code)
@@ -28,7 +30,7 @@ namespace LAB_Fashion_API.Services.UserService
             switch (code)
             {
                 case 1:
-                    return "Cpf ou Cnpj é requerido!";
+                    return "É requerido o Cpf ou Cnpj!";
 
                 case 2:
                     return "Cnpj já cadastrado!";
@@ -46,13 +48,17 @@ namespace LAB_Fashion_API.Services.UserService
                     return "Usuário com o Id requesitado não foi encontrado!";
 
                 case 7:
-                    return "Status é requerido!";
+                    return "É requerido o Status!";
+
+                case 8:
+                    return "É requerida a Data de Nascimento!";
             }
             return null;
         }
 
         public async Task<ServiceResponse<GetUserDto>> AddUser(AddUserDto newUser)
         {
+            //TODO: verify valid birthday
             var serviceResponse = new ServiceResponse<GetUserDto>();
             try
             {
@@ -85,7 +91,7 @@ namespace LAB_Fashion_API.Services.UserService
                     serviceResponse.Messages = ErrorMessage(4);
                     return serviceResponse;
                 }
-
+                user = _authRepository.Register(user, newUser.Password);
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
@@ -142,6 +148,7 @@ namespace LAB_Fashion_API.Services.UserService
 
         public async Task<ServiceResponse<GetUserDto>> UpdateUser(int id, UpdateUserDto updateUser)
         {
+            //TODO: verify valid birthday
             var serviceResponse = new ServiceResponse<GetUserDto>();
             try
             {
@@ -172,6 +179,7 @@ namespace LAB_Fashion_API.Services.UserService
 
         public async Task<ServiceResponse<GetUserDto>> UpdateUserStatus(int id, StatusType status)
         {
+            //TODO: Treat the InvalidEnumException 
             var serviceResponse = new ServiceResponse<GetUserDto>();
             try
             {

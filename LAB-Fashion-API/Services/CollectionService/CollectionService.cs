@@ -5,6 +5,7 @@ using LAB_Fashion_API.Enums;
 using LAB_Fashion_API.Filter;
 using LAB_Fashion_API.Models;
 using LAB_Fashion_API.Services.UriService;
+using System.Security.Claims;
 
 namespace LAB_Fashion_API.Services.CollectionService
 {
@@ -50,6 +51,7 @@ namespace LAB_Fashion_API.Services.CollectionService
 
         public async Task<ServiceResponse<GetCollectionDto>> AddCollection(AddCollectionDto newCollection)
         {
+            //TODO: Verify valid Release Date
             var serviceResponse = new ServiceResponse<GetCollectionDto>();
             try
             {
@@ -119,6 +121,7 @@ namespace LAB_Fashion_API.Services.CollectionService
 
         public async Task<ServiceResponse<GetCollectionDto>> UpdateCollection(int id, UpdateCollectionDto updateCollection)
         {
+            //TODO: Verify valid Release Date
             var serviceResponse = new ServiceResponse<GetCollectionDto>();
             try
             {

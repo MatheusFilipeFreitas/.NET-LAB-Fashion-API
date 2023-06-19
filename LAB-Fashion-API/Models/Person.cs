@@ -28,7 +28,7 @@ namespace LAB_Fashion_API.Models
         public string Sex { get; set; } = string.Empty;
 
         [Column(TypeName = "Date")]
-        public DateTime Birthday { get; set; } = new DateTime();
+        public DateTime Birthday { get; set; }
         public string? Cpf { get; set; }
         public string? Cnpj { get; set; }
         [NotNull]

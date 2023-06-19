@@ -10,7 +10,7 @@ namespace LAB_Fashion_API.Dto.UserDto
         [Required(ErrorMessage = "É obrigatório o Gênero!")]
         public string Sex { get; set; } = string.Empty;
         [Required(ErrorMessage = "É obrigatório a Data de Nascimento!")]
-        public DateTime Birthday { get; set; } = new DateTime();
+        public DateTime Birthday { get; set; }
         [Required(ErrorMessage = "É obrigatório o Número do Telefone!")]
         public string Phone { get; set; } = string.Empty;
         [Required(ErrorMessage = "É obrigatório o Tipo de Usuário!")]
