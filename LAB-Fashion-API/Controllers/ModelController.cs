@@ -9,8 +9,6 @@ namespace LAB_Fashion_API.Controllers
     public class ModelController : ControllerBase
     {
         List<Model> models = new List<Model> {
-                new Model(1, "Modelo Teste", null, 2, ModelType.Calça, LayoutType.Estampa),
-                new Model(2, "Teste", null, 1, ModelType.Boné, LayoutType.Liso),
             };
 
         [HttpGet]

@@ -27,6 +27,7 @@ namespace LAB_Fashion_API.Models
         public Seasons Season { get; set; }
         [NotNull]
         public StatusType Status { get; set; } = StatusType.Active;
+        public List<Model>? Models { get; set; }
 
     }
 }

@@ -209,7 +209,12 @@ namespace LAB_Fashion_API.Services.CollectionService
                 serviceResponse.Messages = ErrorMessage(5);
                 return serviceResponse;
             }
-            //TODO: See if are any models in this collection
+            if(collection.Models is not null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Messages = ErrorMessage(6);
+                return serviceResponse;
+            }
 
             _context.Remove(collection);
             await _context.SaveChangesAsync();
