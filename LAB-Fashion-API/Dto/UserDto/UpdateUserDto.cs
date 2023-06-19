@@ -15,5 +15,8 @@ namespace LAB_Fashion_API.Dto.UserDto
         public string Phone { get; set; } = string.Empty;
         [Required(ErrorMessage = "É obrigatório o Tipo de Usuário!")]
         public UserType Type { get; set; } = UserType.Other;
+        [Required(ErrorMessage = "É obrigatórioi o Status!")]
+        [EnumDataType(typeof(StatusType), ErrorMessage = "Status precisa ser ou Inactive ou Active")]
+        public StatusType Status { get; set; }
     }
 }

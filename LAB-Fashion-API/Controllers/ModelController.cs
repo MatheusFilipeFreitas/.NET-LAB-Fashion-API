@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LAB_Fashion_API.Models;
+using Microsoft.AspNetCore.Mvc;
+using LAB_Fashion_API.Enums;
 
 namespace LAB_Fashion_API.Controllers
 {
@@ -6,35 +8,48 @@ namespace LAB_Fashion_API.Controllers
     [Route("[controller]")]
     public class ModelController : ControllerBase
     {
+        List<Model> models = new List<Model> {
+                new Model(1, "Modelo Teste", null, 2, ModelType.Calça, LayoutType.Estampa),
+                new Model(2, "Teste", null, 1, ModelType.Boné, LayoutType.Liso),
+            };
 
         [HttpGet]
-        public string Get()
+        public ActionResult<List<Model>> Get()
         {
-            return "Get method called!";
+            return Ok(models);
         }
 
         [HttpGet("{id}")]
-        public string GetById(int id)
+        public ActionResult<Model> GetById(int id)
         {
-            return "Get by id method called!";
+            var model = models.FirstOrDefault(m => m.Id == id);
+            return Ok(model);
         }
 
         [HttpPost]
-        public string Post([FromBody] string text)
+        public ActionResult<Model> Post([FromBody] Model addModel)
         {
-            return "Post method called!";
+            models.Add(addModel);
+            return CreatedAtAction(nameof(GetById), new { addModel.Id }, addModel);
         }
 
         [HttpPut("{id}")]
-        public string Put(int id, [FromBody] string text)
+        public ActionResult<Model> Put(int id, [FromBody] Model updateModel)
         {
-            return "Put method called!";
+            var model = models.FirstOrDefault(m => m.Id == id);
+            model.Name = updateModel.Name;
+            model.CollectionId = updateModel.CollectionId;
+            model.Layout = updateModel.Layout;
+            model.Type = updateModel.Type;
+            return Ok(model);
         }
 
         [HttpDelete("{id}")]
-        public string Delete(int id)
+        public ActionResult<Model> Delete(int id)
         {
-            return "Delete method called!";
+            var model = models.FirstOrDefault(m => m.Id == id);
+            models.Remove(model);
+            return NoContent();
         }
     }
 }
