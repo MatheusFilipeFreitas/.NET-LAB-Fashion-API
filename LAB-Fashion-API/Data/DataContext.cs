@@ -10,6 +10,6 @@ namespace LAB_Fashion_API.Data
         }
 
         public DbSet<User> Users => Set<User>();
-        //public DbSet<Person> Peoples => Set<Person>();
+        public DbSet<Collection> Collections => Set<Collection>();
     }
 }
