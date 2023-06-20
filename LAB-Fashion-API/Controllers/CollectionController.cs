@@ -12,40 +12,50 @@ namespace LAB_Fashion_API.Controllers
     [Route("api/[controller]")]
     public class CollectionController : ControllerBase
     {
+
+        public static List<Collection> collections = new List<Collection> { 
+                new Collection("Teste", 1, "Adidas", 32.45d, new DateTime(), Seasons.Winter),
+                new Collection("Outro", 2, "Nike", 32.45d, new DateTime(), Seasons.Winter)
+            };
+
         [HttpGet]
-        public string Get()
+        public ActionResult<List<Collection>> Get()
         {
-            return "Get method called";
+            return collections;
         }
 
         [HttpGet("{id}")]
-        public string GetById(int id)
+        public ActionResult<Collection> GetById(int id)
         {
-            return "Get by id method called";
+            return collections[id] ;
         }
 
         [HttpPost]
-        public string Post()
+        public ActionResult<Collection> Post(Collection collection)
         {
-            return "Post method called";
+            collections.Add(collection);
+            return collection;
         }
 
         [HttpPut("{id}")]
-        public string Put()
+        public ActionResult<Collection> Put(int id, Collection collection)
         {
-            return "Put method called";
+            collections[id] = collection;
+            return collection;
         }
 
         [HttpPut("{id}/status")]
-        public string PutStatus(int id, [FromQuery] StatusType status)
+        public ActionResult<Collection> PutStatus(int id, [FromQuery] StatusType status)
         {
-            return "Put status method called";
+            collections[id].Status = status;
+            return collections[id];
         }
 
-        [HttpDelete]
-        public string Delete()
+        [HttpDelete("{id}")]
+        public void Delete(int id)
         {
-            return "Delete method called";
+            var collection = collections[id];
+            collections.Remove(collection);
         }
     }
 }

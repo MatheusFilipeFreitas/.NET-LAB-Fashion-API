@@ -7,6 +7,17 @@ namespace LAB_Fashion_API.Models
     [Index(nameof(Name), IsUnique = true)]
     public class Collection
     {
+
+        public Collection(string name, int accountableId, string brand, double budget, DateTime release, Seasons season)
+        {
+            Name = name;
+            AccountableId = accountableId;
+            Brand = brand;
+            Budget = budget;
+            Release = release;
+            Season = season;
+        }
+
         [Key]
         public int Id { get; set; }
         [NotNull]
@@ -16,13 +27,13 @@ namespace LAB_Fashion_API.Models
         [NotNull]
         public string Brand { get; set; } = string.Empty;
         [NotNull]
-        public Double Budget { get; set; }
+        public double Budget { get; set; }
         [NotNull]
         public DateTime Release { get; set; }
         [NotNull]
         public Seasons Season { get; set; }
         [NotNull]
-        public StatusType Status { get; set; }
+        public StatusType Status { get; set; } = StatusType.Active;
 
     }
 }
