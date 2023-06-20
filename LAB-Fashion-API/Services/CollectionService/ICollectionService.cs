@@ -7,11 +7,11 @@ namespace LAB_Fashion_API.Services.CollectionService
 {
     public interface ICollectionService
     {
-        ServiceResponse<List<Collection>> GetAllCollections();
-        ServiceResponse<Collection> GetById(int id);
-        ServiceResponse<Collection> AddCollection(Collection collection);
-        ServiceResponse<Collection> UpdateCollection(int id, Collection updateCollection);
-        ServiceResponse<Collection> UpdateCollectionStatus(int id, StatusType status);
-        void DeleteCollection(int id);
+        Task<ServiceResponse<List<Collection>>> GetAllCollections(StatusType status);
+        Task<ServiceResponse<Collection>> GetById(int id);
+        Task<ServiceResponse<Collection>> AddCollection(Collection collection);
+        Task<ServiceResponse<Collection>> UpdateCollection(int id, Collection updateCollection);
+        Task<ServiceResponse<Collection>> UpdateCollectionStatus(int id, StatusType status);
+        Task<ServiceResponse<Collection>> DeleteCollection(int id);
     }
 }

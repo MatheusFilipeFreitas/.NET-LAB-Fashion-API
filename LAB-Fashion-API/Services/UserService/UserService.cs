@@ -43,6 +43,9 @@ namespace LAB_Fashion_API.Services.UserService
 
                 case 6:
                     return "Usuário com o Id requesitado não foi encontrado!";
+
+                case 7:
+                    return "Status é requerido!";
             }
             return null;
         }
@@ -96,7 +99,7 @@ namespace LAB_Fashion_API.Services.UserService
         }
 
 
-        public async Task<ServiceResponse<List<GetUserDto>>> GetAllUsers(PaginationFilter filter, String route)
+        public async Task<ServiceResponse<List<GetUserDto>>> GetAllUsers(PaginationFilter filter, String route, StatusType status)
         {
             var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
             var pagedData = await _context.Users
@@ -104,6 +107,16 @@ namespace LAB_Fashion_API.Services.UserService
                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                .Take(validFilter.PageSize)
                .ToListAsync();
+            if (status == StatusType.Active || status == StatusType.Inactive)
+            {
+                pagedData = await _context.Users
+                   .Where(c => c.Status == status)
+                   .Select(c => _mapper.Map<GetUserDto>(c))
+                   .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                   .Take(validFilter.PageSize)
+                   .ToListAsync();
+            }
+            
             var totalRecords = await _context.Users.CountAsync();
 
             var pagedResponse = PaginationHelper.CreatePagedReponse<GetUserDto>(pagedData, validFilter, totalRecords, _uriService, route);
@@ -166,6 +179,11 @@ namespace LAB_Fashion_API.Services.UserService
                 {
                     serviceResponse.Success = false;
                     serviceResponse.Messages = ErrorMessage(6);
+                    return serviceResponse;
+                }else if(status != StatusType.Active && status != StatusType.Inactive)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Messages = ErrorMessage(7);
                     return serviceResponse;
                 }
 

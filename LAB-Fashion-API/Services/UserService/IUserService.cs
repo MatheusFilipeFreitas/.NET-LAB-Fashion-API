@@ -8,7 +8,7 @@ namespace LAB_Fashion_API.Services.UserService
 {
     public interface IUserService
     {
-        Task<ServiceResponse<List<GetUserDto>>> GetAllUsers(PaginationFilter filter, String route);
+        Task<ServiceResponse<List<GetUserDto>>> GetAllUsers(PaginationFilter filter, String route, StatusType status);
         Task<ServiceResponse<GetUserDto>> GetById(int id);
         Task<ServiceResponse<GetUserDto>> AddUser(AddUserDto newUser);
         Task<ServiceResponse<GetUserDto>> UpdateUser(int id, UpdateUserDto updateUser);

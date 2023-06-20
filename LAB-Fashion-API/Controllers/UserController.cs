@@ -22,9 +22,9 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<List<GetUserDto>>>> Get([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<ServiceResponse<List<GetUserDto>>>> Get([FromQuery] PaginationFilter filter, [FromQuery] StatusType status)
         {
-            return Ok(await _service.GetAllUsers(filter, route: Request.Path.Value));
+            return Ok(await _service.GetAllUsers(filter, route: Request.Path.Value, status));
         }
 
         [HttpGet("{id}")]
@@ -41,7 +41,7 @@ namespace LAB_Fashion_API.Controllers
                 return NotFound(returnValue);
             }
 
-            return BadRequest();
+            return BadRequest(returnValue);
         }
 
         [HttpPost]
@@ -75,8 +75,10 @@ namespace LAB_Fashion_API.Controllers
             {
                 return NotFound(returnValue);
             }
-
-            return BadRequest();                
+            else
+            {
+                return BadRequest(returnValue);
+            }    
         }
 
         [HttpPut("{id}/status")]
@@ -91,8 +93,10 @@ namespace LAB_Fashion_API.Controllers
             {
                 return NotFound(returnValue);
             }
-
-            return BadRequest();
+            else
+            {
+                return BadRequest(returnValue);
+            }
         }
     }
 }

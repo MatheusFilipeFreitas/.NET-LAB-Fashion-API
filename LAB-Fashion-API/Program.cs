@@ -8,6 +8,7 @@ global using LAB_Fashion_API.Helper;
 using LAB_Fashion_API.Services.UriService;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using LAB_Fashion_API.Services.CollectionService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICollectionService, CollectionService>();
 
 var app = builder.Build();
 
