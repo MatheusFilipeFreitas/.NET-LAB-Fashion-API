@@ -1,53 +1,100 @@
-﻿using LAB_Fashion_API.Models;
+﻿using LAB_Fashion_API.Enums;
+using LAB_Fashion_API.Filter;
+using LAB_Fashion_API.Dto.ModelDto;
+using LAB_Fashion_API.Services.ModelService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using LAB_Fashion_API.Enums;
 
 namespace LAB_Fashion_API.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ModelController : ControllerBase
     {
-        List<Model> models = new List<Model> {
-            };
+        private readonly IModelService _service;
+
+        public ModelController(IModelService service)
+        {
+            _service = service;
+        }
 
         [HttpGet]
-        public ActionResult<List<Model>> Get()
+        public async Task<ActionResult<ServiceResponse<List<GetModelDto>>>> Get([FromQuery] PaginationFilter filter, [FromQuery] LayoutType layout)
         {
-            return Ok(models);
+            return Ok(await _service.GetAllModels(filter, Request.Path.Value, layout));
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Model> GetById(int id)
+        public async Task<ActionResult<ServiceResponse<GetModelDto>>> GetById(int id)
         {
-            var model = models.FirstOrDefault(m => m.Id == id);
-            return Ok(model);
+            var returnValue = await _service.GetById(id);
+            if (returnValue.Success)
+            {
+                return Ok(returnValue);
+            }
+            else if (returnValue.Messages.Contains("não foi encontrado"))
+            {
+                return NotFound(returnValue);
+            }
+            else
+            {
+                return BadRequest(returnValue);
+            }
         }
 
         [HttpPost]
-        public ActionResult<Model> Post([FromBody] Model addModel)
+        public async Task<ActionResult<ServiceResponse<GetModelDto>>> Post([FromBody] AddModelDto addModel)
         {
-            models.Add(addModel);
-            return CreatedAtAction(nameof(GetById), new { addModel.Id }, addModel);
+            var returnValue = await _service.AddModel(addModel);
+            if (returnValue.Success)
+            {
+                return CreatedAtAction(nameof(GetById), new { id = returnValue.Data.Id }, addModel);
+            }
+            else if (returnValue.Messages.Contains("já cadastrado"))
+            {
+                return Conflict(returnValue);
+            }
+            else
+            {
+                return BadRequest(returnValue);
+            }
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Model> Put(int id, [FromBody] Model updateModel)
+        public async Task<ActionResult<ServiceResponse<GetModelDto>>> Put(int id, [FromBody] UpdateModelDto updateModel)
         {
-            var model = models.FirstOrDefault(m => m.Id == id);
-            model.Name = updateModel.Name;
-            model.CollectionId = updateModel.CollectionId;
-            model.Layout = updateModel.Layout;
-            model.Type = updateModel.Type;
-            return Ok(model);
+            var returnValue = await _service.UpdateModel(id, updateModel);
+            if (returnValue.Success)
+            {
+                return Ok(returnValue);
+            }
+            else if (returnValue.Messages.Contains("não foi encontrado"))
+            {
+                return NotFound(returnValue);
+            }
+            else
+            {
+                return BadRequest(returnValue);
+            }
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<Model> Delete(int id)
+        public async Task<ActionResult<ServiceResponse<GetModelDto>>> Delete(int id)
         {
-            var model = models.FirstOrDefault(m => m.Id == id);
-            models.Remove(model);
-            return NoContent();
+            var returnValue = await _service.DeleteModel(id);
+            if (returnValue.Success)
+            {
+                return NoContent();
+            }
+            else if (returnValue.Messages.Contains("não foi encontrado"))
+            {
+                return NotFound(returnValue);
+            }
+            else
+            {
+                return BadRequest(returnValue);
+            }
         }
     }
 }

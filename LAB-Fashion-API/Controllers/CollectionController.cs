@@ -1,10 +1,7 @@
 ﻿using LAB_Fashion_API.Dto.CollectionDto;
 using LAB_Fashion_API.Enums;
-using LAB_Fashion_API.Errors.User;
 using LAB_Fashion_API.Filter;
-using LAB_Fashion_API.Models;
 using LAB_Fashion_API.Services.CollectionService;
-using LAB_Fashion_API.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -24,13 +21,13 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<List<Collection>>>> Get([FromQuery] PaginationFilter filter, [FromQuery] StatusType status)
+        public async Task<ActionResult<ServiceResponse<List<GetCollectionDto>>>> Get([FromQuery] PaginationFilter filter, [FromQuery] StatusType status)
         {
             return Ok(await _service.GetAllCollections(filter, route: Request.Path.Value, status));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceResponse<Collection>>> GetById(int id)
+        public async Task<ActionResult<ServiceResponse<GetCollectionDto>>> GetById(int id)
         {
             var returnValue = await _service.GetById(id);
             if(returnValue.Success)
@@ -47,7 +44,7 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<Collection>>> Post(AddCollectionDto collection)
+        public async Task<ActionResult<ServiceResponse<GetCollectionDto>>> Post(AddCollectionDto collection)
         {
             var returnValue = await _service.AddCollection(collection);
             if (returnValue.Success)
@@ -65,7 +62,7 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ServiceResponse<Collection>>> Put(int id, UpdateCollectionDto collection)
+        public async Task<ActionResult<ServiceResponse<GetCollectionDto>>> Put(int id, UpdateCollectionDto collection)
         {
             var returnValue = await _service.UpdateCollection(id, collection);
             if (returnValue.Success)
@@ -83,7 +80,7 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpPut("{id}/status")]
-        public async Task<ActionResult<ServiceResponse<Collection>>> PutStatus(int id,[FromBody] StatusType status)
+        public async Task<ActionResult<ServiceResponse<GetCollectionDto>>> PutStatus(int id,[FromBody] StatusType status)
         {
             var returnValue = await _service.UpdateCollectionStatus(id, status);
             if (returnValue.Success)
@@ -101,7 +98,7 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ServiceResponse<Collection>>> Delete(int id)
+        public async Task<ActionResult<ServiceResponse<GetCollectionDto>>> Delete(int id)
         {
             var returnValue = await _service.DeleteCollection(id);
             if (returnValue.Success)

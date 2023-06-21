@@ -16,8 +16,11 @@ namespace LAB_Fashion_API.Data
             _configuration = configuration;
         }
 
+        //TODO: Create method to reset password
+
         public async Task<ServiceResponse<string>> Login(string email, string password)
         {
+            //TODO: Validate if the user is active
             var response = new ServiceResponse<string>();
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower().Equals(email.ToLower()));
             if (user is null)

@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace LAB_Fashion_API.Models
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class Model
     {
         [Key]
