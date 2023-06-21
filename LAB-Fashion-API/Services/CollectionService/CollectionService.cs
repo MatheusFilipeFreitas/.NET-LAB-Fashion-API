@@ -1,14 +1,27 @@
-﻿using LAB_Fashion_API.Enums;
+﻿
+using LAB_Fashion_API.Dto.CollectionDto;
+using LAB_Fashion_API.Dto.UserDto;
+using LAB_Fashion_API.Enums;
+using LAB_Fashion_API.Filter;
 using LAB_Fashion_API.Models;
+using LAB_Fashion_API.Services.UriService;
 
 namespace LAB_Fashion_API.Services.CollectionService
 {
     public class CollectionService : ICollectionService
     {
-        public static List<Collection> collections = new List<Collection> {
-                new Collection("Teste", 1, "Adidas", 32.45d, new DateTime(), Seasons.Winter),
-                new Collection("Outro", 2, "Nike", 32.45d, new DateTime(), Seasons.Winter)
-            };
+        private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        private readonly IUriService _uriService;
+        private readonly IUserService _userService;
+
+        public CollectionService(DataContext context, IMapper mapper, IUriService uriService, IUserService userService)
+        {
+            _context = context;
+            _mapper = mapper;
+            _uriService = uriService;
+            _userService = userService;
+        }
 
         private string ErrorMessage(int code)
         {
@@ -22,104 +35,183 @@ namespace LAB_Fashion_API.Services.CollectionService
 
                 case 3:
                     return "Status é requerido!";
+
+                case 4:
+                    return "Usuário (Responsável) com o Id requesitado não foi encotrado!";
+
+                case 5:
+                    return "Para realizar a operação é necessário que a coleção tenha seu status como inátiva!";
+
+                case 6:
+                    return "Para realizar a operação é necessário que a coleção não possua nenhum modelo vinculado!";
             }
             return null;
         }
 
-        public async Task<ServiceResponse<Collection>> AddCollection(Collection collection)
+        public async Task<ServiceResponse<GetCollectionDto>> AddCollection(AddCollectionDto newCollection)
         {
-            var serviceResponse = new ServiceResponse<Collection>();
-            if(collections.FirstOrDefault(c => c.Name == collection.Name) is not null)
+            var serviceResponse = new ServiceResponse<GetCollectionDto>();
+            try
             {
-                serviceResponse.Success = false;
-                serviceResponse.Messages = ErrorMessage(2);
-                return serviceResponse;
+                var userFound = await _context.Users.FirstOrDefaultAsync(user => user.Id == newCollection.Accountable);
+                var collection = _mapper.Map<Collection>(newCollection);
+                collection.User = userFound;
+                if (await _context.Collections.FirstOrDefaultAsync(c => c.Name == collection.Name) is not null)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Messages = ErrorMessage(2);
+                    return serviceResponse;
+                }
+                else if(userFound is null)
+                {
+                    serviceResponse.Success= false;
+                    serviceResponse.Messages = ErrorMessage(4);
+                    return serviceResponse;
+                }
+                _context.Collections.Add(collection);
+                await _context.SaveChangesAsync();
+                serviceResponse.Data = _mapper.Map<GetCollectionDto>(collection);
             }
-            collections.Add(collection);
-            serviceResponse.Data = collection;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Collection>>> GetAllCollections(StatusType status)
+        public async Task<ServiceResponse<List<GetCollectionDto>>> GetAllCollections(PaginationFilter filter, String route, StatusType status)
         {
-            var serviceResponse = new ServiceResponse<List<Collection>>();
-            if(status == StatusType.Active || status == StatusType.Inactive)
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var pagedData = await _context.Collections
+                          .Select(c => _mapper.Map<GetCollectionDto>(c))
+                          .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                          .Take(validFilter.PageSize)
+                          .ToListAsync();
+            if (status == StatusType.Active || status == StatusType.Inactive)
             {
-                serviceResponse.Data = collections.FindAll(c => c.Status == status);
+                pagedData = await _context.Collections
+                   .Where(c => c.Status == status)
+                   .Select(c => _mapper.Map<GetCollectionDto>(c))
+                   .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                   .Take(validFilter.PageSize)
+                   .ToListAsync();
             }
-            else
-            {
-                serviceResponse.Data = collections;
-            }
-            
-            return serviceResponse;
+
+            var totalRecords = await _context.Collections.CountAsync();
+
+            var pagedResponse = PaginationHelper.CreatePagedReponse<GetCollectionDto>(pagedData, validFilter, totalRecords, _uriService, route);
+            return pagedResponse;
         }
 
-        public async Task<ServiceResponse<Collection>> GetById(int id)
+        public async Task<ServiceResponse<GetCollectionDto>> GetById(int id)
         {
-            var serviceResponse = new ServiceResponse<Collection>();
-            if(collections.FirstOrDefault(c => c.Id == id) is null)
+            var serviceResponse = new ServiceResponse<GetCollectionDto>();
+            var collection = await _context.Collections.FirstOrDefaultAsync(collection => collection.Id == id);
+            if(collection is null)
             {
                 serviceResponse.Success = false;
                 serviceResponse.Messages = ErrorMessage(1);
                 return serviceResponse;
             } 
-            serviceResponse.Data = collections[id];
+            serviceResponse.Data = _mapper.Map<GetCollectionDto>(collection);
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Collection>> UpdateCollection(int id, Collection updateCollection)
+        public async Task<ServiceResponse<GetCollectionDto>> UpdateCollection(int id, UpdateCollectionDto updateCollection)
         {
-            var serviceResponse = new ServiceResponse<Collection>();
-            if (collections.FirstOrDefault(c => c.Id == id) is null)
+            var serviceResponse = new ServiceResponse<GetCollectionDto>();
+            try
             {
-                serviceResponse.Success = false;
-                serviceResponse.Messages = ErrorMessage(1);
-                return serviceResponse;
+                var userFound = await _context.Users.FirstOrDefaultAsync(user => user.Id == updateCollection.Accountable);
+                var collectionFound = await _context.Collections.FirstOrDefaultAsync(collection => collection.Id == id);
+                if (collectionFound is null)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Messages = ErrorMessage(1);
+                    return serviceResponse;
+                }
+                else if (await _context.Collections.FirstOrDefaultAsync(collection => collection.Name == updateCollection.Name && collection.Id != id) is not null)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Messages = ErrorMessage(2);
+                    return serviceResponse;
+                }
+                if(userFound is null)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Messages = ErrorMessage(4);
+                    return serviceResponse;
+                }
+                collectionFound.Name = updateCollection.Name;
+                collectionFound.User = userFound;
+                collectionFound.Brand = updateCollection.Brand;
+                collectionFound.Budget = updateCollection.Budget;
+                collectionFound.Release = updateCollection.Release;
+                collectionFound.Season = updateCollection.Season;
+
+                await _context.SaveChangesAsync();
+                serviceResponse.Data = _mapper.Map<GetCollectionDto>(collectionFound);
             }
-            else if (collections.FirstOrDefault(c => c.Name == updateCollection.Name) is not null)
+            catch(Exception ex)
             {
-                serviceResponse.Success = false;
-                serviceResponse.Messages = ErrorMessage(2);
-                return serviceResponse;
+                throw new Exception(ex.ToString());
             }
-            collections[id] = updateCollection;
-            serviceResponse.Data = updateCollection;
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Collection>> UpdateCollectionStatus(int id, StatusType status)
+        public async Task<ServiceResponse<GetCollectionDto>> UpdateCollectionStatus(int id, StatusType status)
         {
-            var serviceResponse = new ServiceResponse<Collection>();
-            if (collections.FirstOrDefault(c => c.Id == id) is null)
+            var serviceResponse = new ServiceResponse<GetCollectionDto>();
+            try
             {
-                serviceResponse.Success = false;
-                serviceResponse.Messages = ErrorMessage(1);
-                return serviceResponse;
+                var collectionFound = await _context.Collections.FirstOrDefaultAsync(collection => collection.Id == id);
+                if (collectionFound is null)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Messages = ErrorMessage(1);
+                    return serviceResponse;
+                }
+                else if (status != StatusType.Active && status != StatusType.Inactive)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Messages = ErrorMessage(3);
+                    return serviceResponse;
+                }
+
+                collectionFound.Status = status;
+
+                await _context.SaveChangesAsync();
+                serviceResponse.Data = _mapper.Map<GetCollectionDto>(collectionFound);
             }
-            else if(status != StatusType.Active && status != StatusType.Inactive)
+            catch(Exception ex)
             {
-                serviceResponse.Success = false;
-                serviceResponse.Messages = ErrorMessage(3);
-                return serviceResponse;
+                throw new Exception(ex.ToString());
             }
-            collections[id].Status = status;
-            serviceResponse.Data = collections[id];
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Collection>> DeleteCollection(int id)
+        public async Task<ServiceResponse<GetCollectionDto>> DeleteCollection(int id)
         {
-            var serviceResponse = new ServiceResponse<Collection>();
-            var collection = collections.FirstOrDefault(c => c.Id == id);
+            var serviceResponse = new ServiceResponse<GetCollectionDto>();
+            var collection = await _context.Collections.FirstOrDefaultAsync(collection => collection.Id == id);
             if (collection is null)
             {
                 serviceResponse.Success = false;
                 serviceResponse.Messages = ErrorMessage(1);
                 return serviceResponse;
             }
-            collections.Remove(collection);
-            serviceResponse.Data = collection;
+            else if(collection.Status == StatusType.Active)
+            {
+                serviceResponse.Success= false;
+                serviceResponse.Messages = ErrorMessage(5);
+                return serviceResponse;
+            }
+            //TODO: See if are any models in this collection
+
+            _context.Remove(collection);
+            await _context.SaveChangesAsync();
+
+            serviceResponse.Data = _mapper.Map<GetCollectionDto>(collection);
             return serviceResponse;
         }
     }

@@ -1,7 +1,7 @@
 ﻿using LAB_Fashion_API.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace LAB_Fashion_API.Dto.User
+namespace LAB_Fashion_API.Dto.UserDto
 {
     public class GetUserDto
     {

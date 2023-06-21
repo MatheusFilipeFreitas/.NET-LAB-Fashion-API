@@ -1,5 +1,7 @@
-﻿using LAB_Fashion_API.Enums;
+﻿using AutoMapper.Configuration.Annotations;
+using LAB_Fashion_API.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
 namespace LAB_Fashion_API.Models
@@ -7,23 +9,14 @@ namespace LAB_Fashion_API.Models
     [Index(nameof(Name), IsUnique = true)]
     public class Collection
     {
-
-        public Collection(string name, int accountableId, string brand, double budget, DateTime release, Seasons season)
-        {
-            Name = name;
-            AccountableId = accountableId;
-            Brand = brand;
-            Budget = budget;
-            Release = release;
-            Season = season;
-        }
-
         [Key]
         public int Id { get; set; }
         [NotNull]
         public string Name { get; set; } = string.Empty;
         [NotNull]
-        public int AccountableId { get; set; }
+        public User? User { get; set; }
+        [NotNull]
+        public int? Accountable { get; set; }
         [NotNull]
         public string Brand { get; set; } = string.Empty;
         [NotNull]

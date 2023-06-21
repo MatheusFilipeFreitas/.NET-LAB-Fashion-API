@@ -1,8 +1,10 @@
-﻿using LAB_Fashion_API.Dto.User;
+﻿
+using LAB_Fashion_API.Dto.UserDto;
 using LAB_Fashion_API.Enums;
 using LAB_Fashion_API.Errors.User;
 using LAB_Fashion_API.Filter;
 using LAB_Fashion_API.Models;
+using LAB_Fashion_API.Services.UriService;
 using LAB_Fashion_API.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,11 +16,13 @@ namespace LAB_Fashion_API.Controllers
     {
         private readonly IUserService _service;
         private readonly IMapper _mapper;
+        private readonly IUriService _uriService;
 
-        public UserController(IUserService service, IMapper mapper)
+        public UserController(IUserService service, IMapper mapper, IUriService uriService)
         {
             _service = service;
             _mapper = mapper;
+            _uriService = uriService;
         }
 
         [HttpGet]
@@ -82,7 +86,7 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpPut("{id}/status")]
-        public async Task<ActionResult<ServiceResponse<GetUserDto>>> PutStatus(int id, [FromQuery]StatusType status)
+        public async Task<ActionResult<ServiceResponse<GetUserDto>>> PutStatus(int id, [FromBody] StatusType status)
         {
             var returnValue = await _service.UpdateUserStatus(id, status);
             if (returnValue.Success)
