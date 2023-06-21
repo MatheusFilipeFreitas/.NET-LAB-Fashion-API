@@ -6,6 +6,7 @@ using LAB_Fashion_API.Filter;
 using LAB_Fashion_API.Models;
 using LAB_Fashion_API.Services.UriService;
 using LAB_Fashion_API.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LAB_Fashion_API.Controllers
@@ -26,12 +27,14 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<ServiceResponse<List<GetUserDto>>>> Get([FromQuery] PaginationFilter filter, [FromQuery] StatusType status)
         {
             return Ok(await _service.GetAllUsers(filter, route: Request.Path.Value, status));
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<ServiceResponse<GetUserDto>>> GetById(int id)
         {
             var returnValue = await _service.GetById(id);
@@ -69,6 +72,7 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult<ServiceResponse<GetUserDto>>> Put(int id ,UpdateUserDto user)
         {
             var returnValue = await _service.UpdateUser(id, user);
@@ -86,6 +90,7 @@ namespace LAB_Fashion_API.Controllers
         }
 
         [HttpPut("{id}/status")]
+        [Authorize]
         public async Task<ActionResult<ServiceResponse<GetUserDto>>> PutStatus(int id, [FromBody] StatusType status)
         {
             var returnValue = await _service.UpdateUserStatus(id, status);

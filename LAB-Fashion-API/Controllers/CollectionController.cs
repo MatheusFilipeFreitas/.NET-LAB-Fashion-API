@@ -5,10 +5,13 @@ using LAB_Fashion_API.Filter;
 using LAB_Fashion_API.Models;
 using LAB_Fashion_API.Services.CollectionService;
 using LAB_Fashion_API.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LAB_Fashion_API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CollectionController : ControllerBase
