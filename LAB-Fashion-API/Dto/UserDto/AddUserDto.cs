@@ -13,7 +13,7 @@ namespace LAB_Fashion_API.Dto.UserDto
         [Required(ErrorMessage = "É obrigatório o Gênero!")]
         public string Sex { get; set; } = string.Empty;
         [Required(ErrorMessage = "É obrigatório a Data de Nascimento!")]
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
         public string? Cpf { get; set; }
         public string? Cnpj { get; set; }
         [Required(ErrorMessage = "É obrigatório o Número do Telefone!")]
@@ -23,6 +23,9 @@ namespace LAB_Fashion_API.Dto.UserDto
         [Required(ErrorMessage = "É obrigatório o Tipo de Usuário!")]
         public UserType Type { get; set; } = UserType.Other;
         [Required(ErrorMessage = "É obrigatória a Senha!")]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
+        [Required(ErrorMessage = "É obrigatórioi o Status!")]
+        [EnumDataType(typeof(StatusType), ErrorMessage = "Status precisa ser ou Inactive ou Active")]
+        public StatusType Status { get; set; }
     }
 }
