@@ -1,9 +1,7 @@
 ﻿
 using LAB_Fashion_API.Dto.UserDto;
 using LAB_Fashion_API.Enums;
-using LAB_Fashion_API.Errors.User;
 using LAB_Fashion_API.Filter;
-using LAB_Fashion_API.Models;
 using LAB_Fashion_API.Services.UriService;
 using LAB_Fashion_API.Services.UserService;
 using Microsoft.AspNetCore.Authorization;

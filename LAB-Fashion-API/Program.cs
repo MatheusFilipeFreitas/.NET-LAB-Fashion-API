@@ -2,7 +2,6 @@ global using LAB_Fashion_API.Services.UserService;
 global using LAB_Fashion_API.Wrapper;
 global using Microsoft.EntityFrameworkCore;
 global using LAB_Fashion_API.Data;
-global using LAB_Fashion_API.Dto;
 global using AutoMapper;
 global using LAB_Fashion_API.Helper;
 using LAB_Fashion_API.Services.UriService;
@@ -13,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using LAB_Fashion_API.Services.ModelService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,8 +53,10 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IModelService, ModelService>();
 builder.Services.AddScoped<ICollectionService, CollectionService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters

@@ -52,13 +52,21 @@ namespace LAB_Fashion_API.Services.UserService
 
                 case 8:
                     return "É requerida a Data de Nascimento!";
+
+                case 9:
+                    return "É necessário ter pelo menos 18 anos para se inscrever no sistema!";
+
+                case 10:
+                    return "CPF inválido!";
+
+                case 11:
+                    return "CNPJ inválido!";
             }
             return null;
         }
 
         public async Task<ServiceResponse<GetUserDto>> AddUser(AddUserDto newUser)
         {
-            //TODO: verify valid birthday
             var serviceResponse = new ServiceResponse<GetUserDto>();
             try
             {
@@ -79,18 +87,32 @@ namespace LAB_Fashion_API.Services.UserService
                     serviceResponse.Success = false;
                     serviceResponse.Messages = ErrorMessage(2);
                     return serviceResponse;
-                }else if(user.Cnpj is null && await _context.Users.FirstOrDefaultAsync(c => c.Cpf == user.Cpf) is not null)
+                }
+                else if(user.Cnpj is null && await _context.Users.FirstOrDefaultAsync(c => c.Cpf == user.Cpf) is not null)
                 {
                     serviceResponse.Success = false;
                     serviceResponse.Messages = ErrorMessage(3);
                     return serviceResponse;
                 }
-                if(await _context.Users.FirstOrDefaultAsync(c => c.Email == user.Email) is not null)
+                else if(user.Cpf is null && !Validators.CnpjValidator.IsCnpj(user.Cnpj))
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Messages = ErrorMessage(11);
+                    return serviceResponse;
+                }
+                else if(user.Cnpj is null && !Validators.CpfValidator.IsCpf(user.Cpf))
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Messages = ErrorMessage(10);
+                    return serviceResponse;
+                }
+                else if(await _context.Users.FirstOrDefaultAsync(c => c.Email == user.Email) is not null)
                 {
                     serviceResponse.Success = false;
                     serviceResponse.Messages = ErrorMessage(4);
                     return serviceResponse;
                 }
+
                 user = _authRepository.Register(user, newUser.Password);
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();

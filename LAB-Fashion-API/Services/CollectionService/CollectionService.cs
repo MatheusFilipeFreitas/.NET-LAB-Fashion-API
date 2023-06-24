@@ -5,6 +5,7 @@ using LAB_Fashion_API.Enums;
 using LAB_Fashion_API.Filter;
 using LAB_Fashion_API.Models;
 using LAB_Fashion_API.Services.UriService;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace LAB_Fashion_API.Services.CollectionService
@@ -45,6 +46,9 @@ namespace LAB_Fashion_API.Services.CollectionService
 
                 case 6:
                     return "Para realizar a operação é necessário que a coleção não possua nenhum modelo vinculado!";
+
+                case 7:
+                    return "Para se inscrever no sistema, deve ser maior de 18 anos!";
             }
             return null;
         }
@@ -52,6 +56,7 @@ namespace LAB_Fashion_API.Services.CollectionService
         public async Task<ServiceResponse<GetCollectionDto>> AddCollection(AddCollectionDto newCollection)
         {
             //TODO: Verify valid Release Date
+            //TODO: Verify valid Cpf or Cnpj
             var serviceResponse = new ServiceResponse<GetCollectionDto>();
             try
             {
@@ -122,6 +127,7 @@ namespace LAB_Fashion_API.Services.CollectionService
         public async Task<ServiceResponse<GetCollectionDto>> UpdateCollection(int id, UpdateCollectionDto updateCollection)
         {
             //TODO: Verify valid Release Date
+            //TODO: Verify valid Cpf or Cnpj
             var serviceResponse = new ServiceResponse<GetCollectionDto>();
             try
             {
@@ -209,7 +215,7 @@ namespace LAB_Fashion_API.Services.CollectionService
                 serviceResponse.Messages = ErrorMessage(5);
                 return serviceResponse;
             }
-            if(collection.Models is not null)
+            if(await _context.Models.Where(m => m.CollectionId == collection.Id).ToListAsync() is not null)
             {
                 serviceResponse.Success = false;
                 serviceResponse.Messages = ErrorMessage(6);

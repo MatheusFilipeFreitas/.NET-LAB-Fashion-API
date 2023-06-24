@@ -16,12 +16,15 @@ namespace LAB_Fashion_API.Models
         [NotNull]
         public User? User { get; set; }
         [NotNull]
+        public int UserId { get; set; }
+        [NotNull]
         public int? Accountable { get; set; }
         [NotNull]
         public string Brand { get; set; } = string.Empty;
         [NotNull]
         public double Budget { get; set; }
         [NotNull]
+        [Column(TypeName = "Date")]
         public DateTime Release { get; set; }
         [NotNull]
         public Seasons Season { get; set; }
